@@ -1,0 +1,220 @@
+version: 1
+
+ci:
+  image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
+
+matchers:
+  branches:
+    master: "^master$"
+
+vars:
+  org: hlhd
+  github_org: HomeLabHD
+  gitlab_group: HomeLabHD
+  repo: echoip
+  github_repo: echoip
+
+versioning:
+  tag_sources:
+    - id: stable
+      pattern: "^v?\\d+\\.\\d+\\.\\d+$"
+    - id: prerelease
+      pattern: "^v?\\d+\\.\\d+\\.\\d+-.+"
+  branch_builds:
+    - id: default
+      base_from: [stable]
+      format: "{base}-dev+{sha}"
+  no_lineage:
+    # No reachable stable tag in the fork yet → dev builds get an explicit honest version.
+    # Switch to `mode: error` once a v-tag lands.
+    mode: explicit
+    version: "0.0.0-dev+{sha}"
+
+forges:
+  - id: gitlab
+    provider: gitlab
+    url: "https://gitlab.prplanit.com"
+    credentials: GITLAB
+
+  - id: github
+    provider: github
+    url: "https://github.com"
+    credentials: GITHUB
+
+repos:
+  - id: primary
+    forge: gitlab
+    project: "{var:gitlab_group}/{var:repo}"
+    roles: [primary]
+    branches:
+      default: master
+    worktree: "."
+
+  - id: github-mirror
+    forge: github
+    project: "{var:github_org}/{var:github_repo}"
+    roles: [mirror, publish-origin]
+    sync:
+      git: true
+      releases: true
+
+registries:
+  - id: dockerhub
+    provider: docker
+    url: docker.io
+    credentials: DOCKER
+    default_path: "{var:org}/{var:repo}"
+
+  - id: harbor
+    provider: harbor
+    url: cr.pcfae.com
+    credentials: HARBOR
+    default_path: "{var:org}/{var:repo}"
+
+  # GitHub Container Registry (primary). On GitHub Actions, StageFreight auto-wires
+  # GHCR_USER/GHCR_TOKEN from the runner's GITHUB_TOKEN (packages: write) — no secret.
+  - id: ghcr
+    provider: ghcr
+    url: ghcr.io
+    credentials: GHCR
+    default_path: "homelabhd/{var:repo}"
+
+builds:
+  # echoip — self-hosted "what is my IP" service. Single scratch image built from the
+  # repo's own Dockerfile (Go, CGO disabled). Theming is env-configurable at runtime
+  # (ECHOIP_BRAND_ICON / _CAPTION / _FOOTER / ECHOIP_COLOR_*), leek theme as default.
+  - id: echoip
+    kind: docker
+    platforms: [linux/amd64]
+
+targets:
+  # ── GHCR (primary): dev builds on every commit ──
+  - id: ghcr-dev
+    kind: registry
+    registry: ghcr
+    build: echoip
+    tags: ["dev-{sha:8}", "latest-dev"]
+    when: { branches: [master], events: [push] }
+
+  - id: ghcr-stable
+    kind: registry
+    registry: ghcr
+    build: echoip
+    tags: ["v{version}", "latest"]
+    when: { git_tags: [stable], events: [tag] }
+
+  - id: ghcr-prerelease
+    kind: registry
+    registry: ghcr
+    build: echoip
+    tags: ["v{version}"]
+    when: { git_tags: [prerelease], events: [tag] }
+
+  # ── Docker Hub (gitlab-only: no Docker Hub creds on the GitHub fork) ──
+  - id: dockerhub-dev
+    kind: registry
+    registry: dockerhub
+    build: echoip
+    tags: ["dev-{sha:8}", "latest-dev"]
+    when: { branches: [master], events: [push], forges: [gitlab] }
+    retention:
+      keep_last: 6
+      protect: ["latest-dev"]
+
+  - id: dockerhub-stable
+    kind: registry
+    registry: dockerhub
+    build: echoip
+    tags: ["v{version}", "latest"]
+    when: { git_tags: [stable], events: [tag], forges: [gitlab] }
+
+  - id: dockerhub-prerelease
+    kind: registry
+    registry: dockerhub
+    build: echoip
+    tags: ["v{version}"]
+    when: { git_tags: [prerelease], events: [tag], forges: [gitlab] }
+
+  # ── Harbor (private cr.pcfae.com; unreachable from hosted GitHub runners → gitlab-only) ──
+  - id: harbor-dev
+    kind: registry
+    registry: harbor
+    build: echoip
+    tags: ["dev-{sha:8}", "latest-dev"]
+    when: { branches: [master], events: [push], forges: [gitlab] }
+
+  - id: harbor-stable
+    kind: registry
+    registry: harbor
+    build: echoip
+    tags: ["v{version}", "latest"]
+    when: { git_tags: [stable], events: [tag], forges: [gitlab] }
+
+  # ── Docker Hub README sync ──
+  - id: dockerhub-readme
+    kind: docker-readme
+    registry: dockerhub
+    when: { branches: [master], events: [push, tag] }
+    file: "README.md"
+    description: "echoip — self-hosted 'what is my IP' service; env-configurable branding/theme. BSD-3-Clause (mpolden/echoip)."
+
+  # ── Releases ──
+  - id: primary-release
+    kind: release
+    aliases: ["v{version}", "latest"]
+    when: { git_tags: [stable], events: [tag] }
+
+  - id: github-release
+    kind: release
+    mirror: github-mirror
+    sync_release: true
+    when: { git_tags: [stable], events: [tag] }
+
+build_cache:
+  mode: hybrid
+  external:
+    target: harbor-dev
+    path: "cache"
+    fallback: "master"
+  local:
+    retention:
+      max_age: "7d"
+      max_size: "8GB"
+
+commit:
+  default_type: chore
+  conventional: true
+  backend: git
+
+lint:
+  level: full
+  exclude:
+    - "*.png"
+    - "*.gif"
+    - "*.svg"
+    - "*.ico"
+    - "*.mmdb"
+
+release:
+  enabled: true
+  security_summary: ".stagefreight/security"
+  registry_links: true
+
+security:
+  enabled: true
+  output: ".stagefreight/security"
+  sbom: true
+  release_detail: full
+
+toolchains:
+  desired:
+    trivy:
+      version: "0.69.3"
+    syft:
+      version: "1.42.3"
+    grype:
+      version: "0.110.0"
+    osv-scanner:
+      version: "2.3.5"
+    cosign:
+      version: "3.0.6"
