@@ -44,7 +44,7 @@ type Server struct {
 // Brand holds deploy-time branding/theme overrides, populated from env at startup.
 // Every field is optional; empty falls back to the built-in defaults in the templates.
 type Brand struct {
-	Icon    string            // logo: a URL, a data: URI, or a file path inlined as a data URI
+	Icon    template.URL      // logo: a URL, a data: URI, or a file path inlined as a data URI
 	Caption string            // text shown under the logo
 	Footer  template.HTML     // footer HTML; empty keeps the template default
 	Colors  map[string]string // CSS token (e.g. "accent", "bg-dark") -> override value
@@ -63,7 +63,7 @@ func (b Brand) Color(name, def string) string {
 // the dark theme, e.g. ECHOIP_COLOR_ACCENT, ECHOIP_COLOR_BG_DARK).
 func NewBrandFromEnv() Brand {
 	b := Brand{
-		Icon:    resolveBrandIcon(os.Getenv("ECHOIP_BRAND_ICON")),
+		Icon:    template.URL(resolveBrandIcon(os.Getenv("ECHOIP_BRAND_ICON"))),
 		Caption: os.Getenv("ECHOIP_BRAND_CAPTION"),
 		Colors:  map[string]string{},
 	}
