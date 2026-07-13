@@ -1,11 +1,14 @@
 package http
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
+	"mime"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -35,6 +38,74 @@ type Server struct {
 	gr         geo.Reader
 	profile    bool
 	Sponsor    bool
+	Brand      Brand
+}
+
+// Brand holds deploy-time branding/theme overrides, populated from env at startup.
+// Every field is optional; empty falls back to the built-in defaults in the templates.
+type Brand struct {
+	Icon    string            // logo: a URL, a data: URI, or a file path inlined as a data URI
+	Caption string            // text shown under the logo
+	Footer  template.HTML     // footer HTML; empty keeps the template default
+	Colors  map[string]string // CSS token (e.g. "accent", "bg-dark") -> override value
+}
+
+// Color returns the override for a CSS token, or def when unset.
+func (b Brand) Color(name, def string) string {
+	if v, ok := b.Colors[name]; ok && v != "" {
+		return v
+	}
+	return def
+}
+
+// NewBrandFromEnv builds branding from ECHOIP_BRAND_ICON / _CAPTION / _FOOTER and any
+// number of ECHOIP_COLOR_<TOKEN> vars (TOKEN lower-cased, '_' -> '-'; append _DARK for
+// the dark theme, e.g. ECHOIP_COLOR_ACCENT, ECHOIP_COLOR_BG_DARK).
+func NewBrandFromEnv() Brand {
+	b := Brand{
+		Icon:    resolveBrandIcon(os.Getenv("ECHOIP_BRAND_ICON")),
+		Caption: os.Getenv("ECHOIP_BRAND_CAPTION"),
+		Colors:  map[string]string{},
+	}
+	if f := os.Getenv("ECHOIP_BRAND_FOOTER"); f != "" {
+		b.Footer = template.HTML(f)
+	}
+	const prefix = "ECHOIP_COLOR_"
+	for _, kv := range os.Environ() {
+		if !strings.HasPrefix(kv, prefix) {
+			continue
+		}
+		eq := strings.IndexByte(kv, '=')
+		if eq < 0 {
+			continue
+		}
+		key := strings.ToLower(strings.ReplaceAll(kv[len(prefix):eq], "_", "-"))
+		if val := kv[eq+1:]; key != "" && val != "" {
+			b.Colors[key] = val
+		}
+	}
+	return b
+}
+
+// resolveBrandIcon passes through a URL/data URI, or reads a file path and inlines it as
+// a data URI (MIME from extension, falling back to content sniffing).
+func resolveBrandIcon(v string) string {
+	if v == "" {
+		return ""
+	}
+	if strings.HasPrefix(v, "http://") || strings.HasPrefix(v, "https://") || strings.HasPrefix(v, "data:") {
+		return v
+	}
+	data, err := os.ReadFile(v)
+	if err != nil {
+		log.Printf("brand icon %q: %v", v, err)
+		return ""
+	}
+	mt := mime.TypeByExtension(filepath.Ext(v))
+	if mt == "" {
+		mt = http.DetectContentType(data)
+	}
+	return "data:" + mt + ";base64," + base64.StdEncoding.EncodeToString(data)
 }
 
 type Response struct {
@@ -364,6 +435,7 @@ func (s *Server) DefaultHandler(w http.ResponseWriter, r *http.Request) *appErro
 		Port           bool
 		Sponsor        bool
 		ExplicitLookup bool
+		Brand          Brand
 	}{
 		response,
 		r.Host,
@@ -375,6 +447,7 @@ func (s *Server) DefaultHandler(w http.ResponseWriter, r *http.Request) *appErro
 		s.LookupPort != nil,
 		s.Sponsor,
 		r.URL.Query().Has("ip"),
+		s.Brand,
 	}
 	if err := t.Execute(w, &data); err != nil {
 		return internalServerError(err)

@@ -71,6 +71,7 @@ func main() {
 		log.Println("Enabling sponsor logo")
 		server.Sponsor = *sponsor
 	}
+	server.Brand = http.NewBrandFromEnv()
 	if len(headers) > 0 {
 		log.Printf("Trusting remote IP from header(s): %s", headers.String())
 	}

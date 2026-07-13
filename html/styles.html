@@ -8,41 +8,41 @@
 
   /* Theme — Light */
   :root {
-    --bg: #ffffff;
-    --bg-surface: #f8f6f4;
-    --border: #d5cec6;
-    --text: #2c231a;
-    --text-secondary: #7a6e62;
-    --accent: #b35c00;
-    --code-bg: #f3efe9;
-    --ip-color: #9a4600;
-    --hero-bg: #faf6f0;
-    --code-accent: #b35c00;
-    --json-bg: #2a2017;
-    --json-text: #e8dfd3;
-    --json-border: #c76a10;
-    --table-row-hover: #f8f4ee;
-    --top-bar: #c76a10;
+    --bg: {{ .Brand.Color "bg" "#f3f8ee" }};
+    --bg-surface: {{ .Brand.Color "bg-surface" "#e8f2e0" }};
+    --border: {{ .Brand.Color "border" "#cde3c0" }};
+    --text: {{ .Brand.Color "text" "#1e3416" }};
+    --text-secondary: {{ .Brand.Color "text-secondary" "#52774a" }};
+    --accent: {{ .Brand.Color "accent" "#2d8b21" }};
+    --code-bg: {{ .Brand.Color "code-bg" "#e8f2e0" }};
+    --ip-color: {{ .Brand.Color "ip-color" "#236a17" }};
+    --hero-bg: {{ .Brand.Color "hero-bg" "#edf6e6" }};
+    --code-accent: {{ .Brand.Color "code-accent" "#2d8b21" }};
+    --json-bg: {{ .Brand.Color "json-bg" "#1b2d15" }};
+    --json-text: {{ .Brand.Color "json-text" "#e2f3d9" }};
+    --json-border: {{ .Brand.Color "json-border" "#56b03c" }};
+    --table-row-hover: {{ .Brand.Color "table-row-hover" "#edf6e6" }};
+    --top-bar: {{ .Brand.Color "top-bar" "#42bc2c" }};
   }
 
   /* Theme — Dark */
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1a1410;
-      --bg-surface: #231c16;
-      --border: #3d3228;
-      --text: #e8dfd3;
-      --text-secondary: #a0927f;
-      --accent: #e8a44a;
-      --code-bg: #261f18;
-      --ip-color: #e8a44a;
-      --hero-bg: #1a1410;
-      --code-accent: #e8a44a;
-      --json-bg: #120e0a;
-      --json-text: #d4c8b8;
-      --json-border: #e8a44a;
-      --table-row-hover: #231c16;
-      --top-bar: #e8a44a;
+      --bg: {{ .Brand.Color "bg-dark" "#121a0f" }};
+      --bg-surface: {{ .Brand.Color "bg-surface-dark" "#1a2515" }};
+      --border: {{ .Brand.Color "border-dark" "#334529" }};
+      --text: {{ .Brand.Color "text-dark" "#e6f3de" }};
+      --text-secondary: {{ .Brand.Color "text-secondary-dark" "#9cbf8d" }};
+      --accent: {{ .Brand.Color "accent-dark" "#63cf45" }};
+      --code-bg: {{ .Brand.Color "code-bg-dark" "#1a2515" }};
+      --ip-color: {{ .Brand.Color "ip-color-dark" "#86ec6e" }};
+      --hero-bg: {{ .Brand.Color "hero-bg-dark" "#121a0f" }};
+      --code-accent: {{ .Brand.Color "code-accent-dark" "#63cf45" }};
+      --json-bg: {{ .Brand.Color "json-bg-dark" "#0d1409" }};
+      --json-text: {{ .Brand.Color "json-text-dark" "#d6ecc9" }};
+      --json-border: {{ .Brand.Color "json-border-dark" "#63cf45" }};
+      --table-row-hover: {{ .Brand.Color "table-row-hover-dark" "#1a2515" }};
+      --top-bar: {{ .Brand.Color "top-bar-dark" "#63cf45" }};
     }
   }
 
@@ -144,24 +144,32 @@
     gap: 0.75rem;
   }
 
+  /* The IP is a big DISPLAY of your address (also editable to look up another).
+     Kept borderless so it reads as a value, not a second button competing with
+     the "Lookup" CTA — a faint underline hints it's editable, brightening on focus. */
   .ip-input {
     font-family: 'JetBrains Mono', monospace;
     font-size: 2.5rem;
     font-weight: 600;
     line-height: 1.2;
     color: var(--ip-color);
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
     text-align: center;
     width: 75%;
-    padding: 0.35rem 0.75rem;
+    padding: 0.35rem 0.5rem;
     outline: none;
     transition: border-color 0.15s;
   }
 
+  .ip-input:hover {
+    border-bottom-color: var(--border);
+  }
+
   .ip-input:focus {
-    border-color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
   .ip-button {
@@ -235,6 +243,13 @@
 
   .sponsor-logo .letters {
     fill: var(--text);
+  }
+
+  .sponsor-logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 2px 6px rgba(24, 56, 18, 0.22));
   }
 
   /* Details grid */
