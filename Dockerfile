@@ -1,5 +1,5 @@
 # Build
-FROM golang:1.24.13 AS build
+FROM golang:1.25.12 AS build
 WORKDIR /go/src/github.com/mpolden/echoip
 COPY . .
 
