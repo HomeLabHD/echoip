@@ -12,9 +12,9 @@ rebaseable overlay on upstream.
 | `ECHOIP_BRAND_ICON` | Logo shown in the hero corner. Accepts a URL, a `data:` URI, or a **file path** inside the container (read and inlined as a data URI). Any `png`/`svg`/`jpg`/`webp`/`gif`. | `/opt/echoip/assets/leek.gif` |
 | `ECHOIP_BRAND_CAPTION` | Caption text under the logo. | `ipleek.com` |
 | `ECHOIP_BRAND_FOOTER` | Footer HTML (replaces the default mpolden/BSD attribution line). | `© 2026 ipleek · Powered by echoip.` |
-| `ECHOIP_COLOR_<TOKEN>` | Override one CSS theme token. `<TOKEN>` is the CSS custom-property name upper-cased with `-`→`_`; append `_DARK` for the dark theme. | `ECHOIP_COLOR_ACCENT=#2d8b21` |
+| `ECHOIP_COLOR_<TOKEN>` | Override one CSS theme token. `<TOKEN>` is the CSS custom-property name upper-cased with `-`→`_`; prefix `DARK_` for the dark theme (so dark vars sort together). | `ECHOIP_COLOR_ACCENT=#2d8b21`, `ECHOIP_COLOR_DARK_ACCENT=#63cf45` |
 
-Color tokens (each also has a `_DARK` variant): `BG`, `BG_SURFACE`, `BORDER`, `TEXT`,
+Color tokens (each also has a `DARK_`-prefixed variant): `BG`, `BG_SURFACE`, `BORDER`, `TEXT`,
 `TEXT_SECONDARY`, `ACCENT`, `CODE_BG`, `IP_COLOR`, `HERO_BG`, `CODE_ACCENT`, `JSON_BG`,
 `JSON_TEXT`, `JSON_BORDER`, `TABLE_ROW_HOVER`, `TOP_BAR`.
 
@@ -52,19 +52,19 @@ env:
   - { name: ECHOIP_COLOR_TABLE_ROW_HOVER,  value: "#edf6e6" }
   - { name: ECHOIP_COLOR_TOP_BAR,          value: "#42bc2c" }
   # palette — dark
-  - { name: ECHOIP_COLOR_BG_DARK,              value: "#121a0f" }
-  - { name: ECHOIP_COLOR_BG_SURFACE_DARK,      value: "#1a2515" }
-  - { name: ECHOIP_COLOR_BORDER_DARK,          value: "#334529" }
-  - { name: ECHOIP_COLOR_TEXT_DARK,            value: "#e6f3de" }
-  - { name: ECHOIP_COLOR_TEXT_SECONDARY_DARK,  value: "#9cbf8d" }
-  - { name: ECHOIP_COLOR_ACCENT_DARK,          value: "#63cf45" }
-  - { name: ECHOIP_COLOR_CODE_BG_DARK,         value: "#1a2515" }
-  - { name: ECHOIP_COLOR_IP_COLOR_DARK,        value: "#86ec6e" }
-  - { name: ECHOIP_COLOR_HERO_BG_DARK,         value: "#121a0f" }
-  - { name: ECHOIP_COLOR_CODE_ACCENT_DARK,     value: "#63cf45" }
-  - { name: ECHOIP_COLOR_JSON_BG_DARK,         value: "#0d1409" }
-  - { name: ECHOIP_COLOR_JSON_TEXT_DARK,       value: "#d6ecc9" }
-  - { name: ECHOIP_COLOR_JSON_BORDER_DARK,     value: "#63cf45" }
-  - { name: ECHOIP_COLOR_TABLE_ROW_HOVER_DARK, value: "#1a2515" }
-  - { name: ECHOIP_COLOR_TOP_BAR_DARK,         value: "#63cf45" }
+  - { name: ECHOIP_COLOR_DARK_BG,              value: "#121a0f" }
+  - { name: ECHOIP_COLOR_DARK_BG_SURFACE,      value: "#1a2515" }
+  - { name: ECHOIP_COLOR_DARK_BORDER,          value: "#334529" }
+  - { name: ECHOIP_COLOR_DARK_TEXT,            value: "#e6f3de" }
+  - { name: ECHOIP_COLOR_DARK_TEXT_SECONDARY,  value: "#9cbf8d" }
+  - { name: ECHOIP_COLOR_DARK_ACCENT,          value: "#63cf45" }
+  - { name: ECHOIP_COLOR_DARK_CODE_BG,         value: "#1a2515" }
+  - { name: ECHOIP_COLOR_DARK_IP_COLOR,        value: "#86ec6e" }
+  - { name: ECHOIP_COLOR_DARK_HERO_BG,         value: "#121a0f" }
+  - { name: ECHOIP_COLOR_DARK_CODE_ACCENT,     value: "#63cf45" }
+  - { name: ECHOIP_COLOR_DARK_JSON_BG,         value: "#0d1409" }
+  - { name: ECHOIP_COLOR_DARK_JSON_TEXT,       value: "#d6ecc9" }
+  - { name: ECHOIP_COLOR_DARK_JSON_BORDER,     value: "#63cf45" }
+  - { name: ECHOIP_COLOR_DARK_TABLE_ROW_HOVER, value: "#1a2515" }
+  - { name: ECHOIP_COLOR_DARK_TOP_BAR,         value: "#63cf45" }
 ```

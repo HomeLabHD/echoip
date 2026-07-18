@@ -59,8 +59,9 @@ func (b Brand) Color(name, def string) string {
 }
 
 // NewBrandFromEnv builds branding from ECHOIP_BRAND_ICON / _CAPTION / _FOOTER and any
-// number of ECHOIP_COLOR_<TOKEN> vars (TOKEN lower-cased, '_' -> '-'; append _DARK for
-// the dark theme, e.g. ECHOIP_COLOR_ACCENT, ECHOIP_COLOR_BG_DARK).
+// number of ECHOIP_COLOR_<TOKEN> vars (TOKEN lower-cased, '_' -> '-'). Dark-theme
+// overrides are prefixed ECHOIP_COLOR_DARK_<TOKEN> so every dark var sorts into one
+// contiguous block, e.g. ECHOIP_COLOR_ACCENT (light), ECHOIP_COLOR_DARK_ACCENT (dark).
 func NewBrandFromEnv() Brand {
 	b := Brand{
 		Icon:    template.URL(resolveBrandIcon(os.Getenv("ECHOIP_BRAND_ICON"))),
@@ -79,7 +80,15 @@ func NewBrandFromEnv() Brand {
 		if eq < 0 {
 			continue
 		}
-		key := strings.ToLower(strings.ReplaceAll(kv[len(prefix):eq], "_", "-"))
+		// Dark overrides carry a DARK_ prefix; the internal key keeps the "-dark"
+		// suffix the templates read (ECHOIP_COLOR_DARK_ACCENT -> "accent-dark").
+		raw := kv[len(prefix):eq]
+		var key string
+		if rest, ok := strings.CutPrefix(raw, "DARK_"); ok {
+			key = strings.ToLower(strings.ReplaceAll(rest, "_", "-")) + "-dark"
+		} else {
+			key = strings.ToLower(strings.ReplaceAll(raw, "_", "-"))
+		}
 		if val := kv[eq+1:]; key != "" && val != "" {
 			b.Colors[key] = val
 		}
