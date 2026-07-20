@@ -100,14 +100,14 @@ targets:
     kind: registry
     registry: ghcr
     build: echoip
-    tags: ["v{version}", "latest"]
+    tags: ["{version}", "latest"]
     when: { git_tags: [stable], events: [tag] }
 
   - id: ghcr-prerelease
     kind: registry
     registry: ghcr
     build: echoip
-    tags: ["v{version}"]
+    tags: ["{version}"]
     when: { git_tags: [prerelease], events: [tag] }
 
   # ── Docker Hub (gitlab-only: no Docker Hub creds on the GitHub fork) ──
@@ -125,14 +125,14 @@ targets:
     kind: registry
     registry: dockerhub
     build: echoip
-    tags: ["v{version}", "latest"]
+    tags: ["{version}", "latest"]
     when: { git_tags: [stable], events: [tag], forges: [gitlab] }
 
   - id: dockerhub-prerelease
     kind: registry
     registry: dockerhub
     build: echoip
-    tags: ["v{version}"]
+    tags: ["{version}"]
     when: { git_tags: [prerelease], events: [tag], forges: [gitlab] }
 
   # ── Harbor (private cr.pcfae.com; unreachable from hosted GitHub runners → gitlab-only) ──
@@ -147,7 +147,7 @@ targets:
     kind: registry
     registry: harbor
     build: echoip
-    tags: ["v{version}", "latest"]
+    tags: ["{version}", "latest"]
     when: { git_tags: [stable], events: [tag], forges: [gitlab] }
 
   # ── Docker Hub README sync ──
@@ -161,7 +161,7 @@ targets:
   # ── Releases ──
   - id: primary-release
     kind: release
-    aliases: ["v{version}", "latest"]
+    aliases: ["{version}", "latest"]
     when: { git_tags: [stable], events: [tag] }
 
   - id: github-release
