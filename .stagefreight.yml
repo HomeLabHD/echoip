@@ -122,6 +122,7 @@ publish:
     readme: README.md
     description:
       - "A simple IP address lookup service, with env-configurable branding and themes."
+    website: https://ipleek.com
     topics: [echoip, ip, self-hosted, docker, golang]
     when: { branches: [master], events: [push, tag] }
 

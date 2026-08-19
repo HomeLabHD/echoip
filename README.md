@@ -1,7 +1,7 @@
 # echoip
 
 A simple service for looking up your IP address. This is the code that powers
-https://ifconfig.co.
+https://ipleek.com.
 
 <!-- sf:project:start -->
 <!-- sf:project:end -->
