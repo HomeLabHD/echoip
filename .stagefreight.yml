@@ -92,10 +92,10 @@ publish:
     tags: ["{version}", "latest"]
     when: { git_tags: [stable], events: [tag] }
 
-  # ── Pre-releases → Docker Hub + GHCR ──
+  # ── Pre-releases → all registries ──
   prerelease:
     kind: registry
-    registry: [dockerhub, ghcr]
+    registry: [dockerhub, ghcr, harbor]
     build: echoip
     tags: ["{version}"]
     when: { git_tags: [prerelease], events: [tag] }
