@@ -1,9 +1,14 @@
 # echoip
 
-[![ci](https://github.com/mpolden/echoip/actions/workflows/ci.yml/badge.svg)](https://github.com/mpolden/echoip/actions/workflows/ci.yml)
-
 A simple service for looking up your IP address. This is the code that powers
 https://ifconfig.co.
+
+<!-- sf:project:start -->
+<!-- sf:project:end -->
+<!-- sf:badges:start -->
+<!-- sf:badges:end -->
+<!-- sf:image:start -->
+<!-- sf:image:end -->
 
 ## Usage
 
