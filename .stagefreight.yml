@@ -84,35 +84,32 @@ registries:
     default_path: "homelabhd/{var:repo}"
 
 publish:
-  # ── GHCR (primary; all forges — github token wires GHCR on the fork's actions) ──
-  ghcr-stable:     { kind: registry, registry: ghcr, build: echoip, tags: ["{version}", "latest"], when: { git_tags: [stable], events: [tag] } }
-  ghcr-prerelease: { kind: registry, registry: ghcr, build: echoip, tags: ["{version}"], when: { git_tags: [prerelease], events: [tag] } }
-  ghcr-dev:        { kind: registry, registry: ghcr, build: echoip, tags: ["dev-{sha:8}", "latest-dev"], when: { branches: [master], events: [push] } }
-
-  # ── Docker Hub + Harbor (gitlab-only: no Docker Hub creds / Harbor unreachable on the github fork) ──
-  registries-stable:
+  # ── Stable releases → all registries ──
+  stable:
     kind: registry
-    registry: [dockerhub, harbor]
+    registry: [dockerhub, ghcr, harbor]
     build: echoip
     tags: ["{version}", "latest"]
-    when: { git_tags: [stable], events: [tag], forges: [gitlab] }
+    when: { git_tags: [stable], events: [tag] }
 
-  registries-dev:
+  # ── Pre-releases → Docker Hub + GHCR ──
+  prerelease:
     kind: registry
-    registry: [dockerhub, harbor]
+    registry: [dockerhub, ghcr]
+    build: echoip
+    tags: ["{version}"]
+    when: { git_tags: [prerelease], events: [tag] }
+
+  # ── Dev builds on every commit → all registries (retained/pruned) ──
+  dev:
+    kind: registry
+    registry: [dockerhub, ghcr, harbor]
     build: echoip
     tags: ["dev-{sha:8}", "latest-dev"]
-    when: { branches: [master], events: [push], forges: [gitlab] }
+    when: { branches: [master], events: [push] }
     retention:
       keep_last: 6
       protect: ["latest-dev"]
-
-  dockerhub-prerelease:
-    kind: registry
-    registry: dockerhub
-    build: echoip
-    tags: ["{version}"]
-    when: { git_tags: [prerelease], events: [tag], forges: [gitlab] }
 
   # ── Project metadata: sync identity to Docker Hub overview + forge repos ──
   project-metadata:
