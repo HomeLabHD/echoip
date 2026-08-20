@@ -4,10 +4,13 @@ A simple service for looking up your IP address. This is the code that powers
 https://ipleek.com.
 
 <!-- sf:project:start -->
+[![GitHub](https://img.shields.io/badge/GitHub-source-181717?logo=github)](https://github.com/HomeLabHD/echoip) [![GitLab](https://img.shields.io/badge/GitLab-source-FC6D26?logo=gitlab)](https://gitlab.prplanit.com/HomeLabHD/echoip) [![Go Report Card](https://goreportcard.com/badge/github.com/HomeLabHD/echoip)](https://goreportcard.com/report/github.com/HomeLabHD/echoip) [![Last Commit](https://img.shields.io/github/last-commit/HomeLabHD/echoip)](https://github.com/HomeLabHD/echoip/commits) [![Open Issues](https://img.shields.io/github/issues/HomeLabHD/echoip)](https://github.com/HomeLabHD/echoip/issues) [![Contributors](https://img.shields.io/github/contributors/HomeLabHD/echoip)](https://github.com/HomeLabHD/echoip/graphs/contributors)
 <!-- sf:project:end -->
 <!-- sf:badges:start -->
+[![build](https://raw.githubusercontent.com/HomeLabHD/echoip/master/.stagefreight/scribe/build.svg)](https://gitlab.prplanit.com/HomeLabHD/echoip/-/pipelines) [![license](https://raw.githubusercontent.com/HomeLabHD/echoip/master/.stagefreight/scribe/license.svg)](https://github.com/HomeLabHD/echoip/blob/master/LICENSE) [![release](https://raw.githubusercontent.com/HomeLabHD/echoip/master/.stagefreight/scribe/release.svg)](https://github.com/HomeLabHD/echoip/releases) ![updated](https://raw.githubusercontent.com/HomeLabHD/echoip/master/.stagefreight/scribe/updated.svg) [![donate](https://img.shields.io/badge/donate-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/T6T41IT163) [![sponsor](https://img.shields.io/badge/sponsor-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/HomeLabHD)
 <!-- sf:badges:end -->
 <!-- sf:image:start -->
+[![Docker](https://img.shields.io/badge/Docker-hlhd%2Fechoip-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/hlhd/echoip) [![pulls](https://raw.githubusercontent.com/HomeLabHD/echoip/master/.stagefreight/scribe/pulls.svg)](https://hub.docker.com/r/hlhd/echoip)
 <!-- sf:image:end -->
 
 ## Usage
