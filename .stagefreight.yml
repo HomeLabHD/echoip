@@ -8,12 +8,6 @@
 # ------------------------------------------------------------------------------
 
 version: 1
-vars:
-  github_org: HomeLabHD
-  github_repo: echoip
-  gitlab_group: HomeLabHD
-  org: hlhd
-  repo: echoip
 builds:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/build-docker.yml
 scribe:
