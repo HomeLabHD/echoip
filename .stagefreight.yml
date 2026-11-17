@@ -78,6 +78,8 @@ repos:
     roles:
       - primary
     worktree: .
+schedules:
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/schedules-upstream.yml
 stencils:
   presets:
     - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/stencils-base.yml
@@ -92,3 +94,5 @@ toolchains:
     presets:
       - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/toolchains-scanners.yml
       - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/toolchains-go.yml
+upstream:
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/upstream-sync.yml
