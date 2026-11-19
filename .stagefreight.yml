@@ -39,7 +39,6 @@ metadata:
   description:
     - Self-hosted service for looking up your own public IP address.
     - Container image for echoip, a small IP-address lookup service that reports the caller's public address and geolocation over plain HTTP or JSON, suitable for self-hosting behind a reverse proxy.
-  license: BSD-3-Clause
   org: HomeLabHD
   title: echoip
   topics:
